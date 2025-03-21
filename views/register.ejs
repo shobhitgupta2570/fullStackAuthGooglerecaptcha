@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        p {
+            margin-top: 15px;
+            text-align: center;
+            color: #555;
+        }
+
+        p a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        p a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Register</h1>
+        <form id="registrationForm" action="/register" method="POST" novalidate>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <div id="usernameError" class="error"></div>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <div id="emailError" class="error"></div>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" minlength="8" required>
+            <div id="passwordError" class="error"></div>
+
+            <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="/login">Login here</a></p>
+    </div>
+
+    <script>
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const usernameError = document.getElementById('usernameError');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        usernameInput.addEventListener('input', () => {
+            const value = usernameInput.value;
+            if (!value) {
+                usernameError.textContent = 'Please enter a username.';
+            } else if (value.length < 3) {
+                usernameError.textContent = 'Username must be at least 3 characters long.';
+            } else {
+                usernameError.textContent = '';
+            }
+        });
+
+        emailInput.addEventListener('input', () => {
+            const value = emailInput.value;
+            if (!value) {
+                emailError.textContent = 'Please enter your email.';
+            } else if (!validateEmail(value)) {
+                emailError.textContent = 'Email is not in the correct format.';
+            } else {
+                emailError.textContent = '';
+            }
+        });
+
+        passwordInput.addEventListener('input', () => {
+            const value = passwordInput.value;
+            if (value.length < 8) {
+                passwordError.textContent = 'Password must be at least 8 characters long.';
+            } else {
+                passwordError.textContent = '';
+            }
+        });
+
+        const registrationForm = document.getElementById('registrationForm');
+        registrationForm.addEventListener('submit', (event) => {
+            if (usernameError.textContent || emailError.textContent || passwordError.textContent) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

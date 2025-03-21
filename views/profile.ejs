@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .profile-container {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        p {
+            font-size: 16px;
+            color: #555;
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button#refresh-session {
+            background-color: #007BFF;
+        }
+
+        button#refresh-session:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h1>Welcome, <%= user.username %>!</h1>
+        <p>Your email: <%= user.email %></p>
+        <p>Member since: <%= user.created_at %></p>
+
+        <form action="/logout" method="POST">
+            <button type="submit">Logout</button>
+        </form>
+
+        <button id="refresh-session">Refresh Session</button>
+    </div>
+
+    <script>
+        const tokenExpiryTime = 15 * 60 * 1000;
+        const warningTime = 2 * 60 * 1000;
+
+        setTimeout(() => {
+            alert('Your session will expire soon. Please refresh the page to stay logged in.');
+        }, tokenExpiryTime - warningTime);
+
+        setTimeout(() => {
+            alert('Your session has expired. Please log in again.');
+            window.location.href = '/login';
+        }, tokenExpiryTime);
+
+        document.getElementById('refresh-session').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/refresh-token', { method: 'POST' });
+
+                if (response.ok) {
+                    alert('Your session has been refreshed!');
+                } else {
+                    alert('Failed to refresh session. Please log in again.');
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Error refreshing session:', error);
+                alert('An error occurred. Please log in again.');
+                window.location.href = '/login';
+            }
+        });
+    </script>
+</body>
+</html>

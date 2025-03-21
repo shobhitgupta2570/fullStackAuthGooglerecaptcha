@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        p {
+            margin-top: 15px;
+            text-align: center;
+            color: #555;
+        }
+
+        p a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        p a:hover {
+            text-decoration: underline;
+        }
+
+        .g-recaptcha {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Login</h1>
+        <form id="loginForm" action="/login" method="POST" novalidate>
+            <label for="usernameOrEmail">Email:</label>
+            <input type="text" id="usernameOrEmail" name="usernameOrEmail" required>
+            <div id="usernameOrEmailError" class="error"></div>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required minlength="8">
+            <div id="passwordError" class="error"></div>
+
+            <div class="g-recaptcha" data-sitekey="<%= process.env.RECAPTCHA_SITE_KEY %>"></div>
+            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="/register">Sign up here</a></p>
+    </div>
+
+    <script>
+        // Get references to input fields and error elements
+        const usernameOrEmailInput = document.getElementById('usernameOrEmail');
+        const passwordInput = document.getElementById('password');
+        const usernameOrEmailError = document.getElementById('usernameOrEmailError');
+        const passwordError = document.getElementById('passwordError');
+
+        // Function to validate email format
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Real-time validation for username or email
+        usernameOrEmailInput.addEventListener('input', () => {
+            const value = usernameOrEmailInput.value;
+            if (!value) {
+                usernameOrEmailError.textContent = 'Please enter your username or email.';
+            } else if (validateEmail(value) === false && !value.includes(" ")) {
+                usernameOrEmailError.textContent = 'Email is not in the correct format.';
+            } else {
+                usernameOrEmailError.textContent = '';
+            }
+        });
+
+        // Real-time validation for password
+        passwordInput.addEventListener('input', () => {
+            const value = passwordInput.value;
+            if (value.length < 8) {
+                passwordError.textContent = 'Password must be at least 8 characters long.';
+            } else {
+                passwordError.textContent = '';
+            }
+        });
+
+        // Prevent submission if errors exist
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', (event) => {
+            if (usernameOrEmailError.textContent || passwordError.textContent) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
